@@ -75,24 +75,29 @@ class cards:
             print("[" + player["User"] + "] You picked: "+cardPicked.replace("-", " ") + "\n")
             cards["p"+str(players.index(player)+1)] = cardPicked
 
+        print("Cards (pick)")
+        print(cards)
         return cards
 
     def findWinner(self, cards):
-        print(cards)
         # split array and get colour / number
-        p1 = cards[0]
-        p2 = cards[1]
+        p1 = cards["p1"]
+        p2 = cards["p2"]
 
-        p1.split('-')
-        p2.split('-')
+        p1 = p1.split('-')
+        p2 = p2.split('-')
 
-        p1 = {"Colour": p1[0], "Number": int(p1[1])}
-        p2 = {"Colour": p2[0], "Number": int(p2[1])}
+        # Format to its own object
+        p1 = {"Colour": p1[0], "Number": p1[1]}
+        p2 = {"Colour": p2[0], "Number": p2[1]}
 
+        # Compare colours first.
         print(p1)
         print(p2)
 
         return p1
+
+        
 # Basic layout
 
 DataBase_Init  = {
