@@ -1,9 +1,6 @@
 import json, random
 
-
 class db:
-
-    # x = class.get()
     def get(self):
         # Check if it errors
         try:
@@ -59,7 +56,7 @@ class cards:
     def get(self): 
         return self.playingCards
 
-    # User picks a card eg. a.pick(p1)
+    # User picks a card eg. a.pick(p1, p2)
     def pick(self, playerOne, playerTwo):
         players = [playerOne, playerTwo]
         cards = {"p1":"", "p2":""}
@@ -98,7 +95,7 @@ class cards:
         return p1
 
         
-# Basic layout
+# Basic database layout
 
 DataBase_Init  = {
     "TimesRun": 0,
@@ -113,21 +110,25 @@ DataBase_Init  = {
         },
     },
     "TopScore": 100,
-    "list": [1, 2, 3],
 }
 
 db = db()
 data = db.get()
 
-#Init the database -> send default data
+# Init the database -> send default data
 if data == False:
     db.write(DataBase_Init)
 
+# Stats for us
 data["TimesRun"] = data["TimesRun"] + 1
+
+# Flush old data
 db.clear()
+
+# Write new
 db.write(data)
 
-#makes it easier to re-call if error.
+# Makes it easier to re-call if error.
 def getUserOne():
     p1["User"] = input("[Player One] Name: ")
     if data["Users"].get(p1["User"], False):
@@ -155,16 +156,18 @@ def getUserTwo():
 print("-------- Developer Notes --------\nProgram has been run:", data["TimesRun"], "times\n---------------------------------\n")
 
 print("You are now playing \"Game of Cards\", have fun!\n")
-print("[Player One] Please enter your details.")
 
 # (Other user arguments are added once logged in)
 p1 = {"Points": 0}
 p2 = {"Points": 0}
 
-#Ask for user's details        
+# Ask users for their details
+print("[Player One] Please enter your details.")
 getUserOne()
+print("[Player Two] Please enter your details.")
 getUserTwo()
 
+# And we begin...
 print("\n\n-------- Woohoo! --------\nAll users authenticated.\nLet the games begin...\n-------------------------\n")
 
 # Init the cards
