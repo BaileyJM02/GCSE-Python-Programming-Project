@@ -1,3 +1,6 @@
+# Copyleft 2019 Bailey Matthews
+# Written by Bailey Matthews for the 2019 OCR Computer Science GCSE.
+
 import json, random, time
 
 # Place at top to fix weird indent bug with multi-line text.
