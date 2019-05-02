@@ -1,6 +1,11 @@
 # Copyleft 2019 Bailey Matthews
 # Written by Bailey Matthews for the 2019 OCR Computer Science GCSE.
 
+# Methods for certain things are not as consistent as they could be to show off different methods avaliable.
+
+# Import "json" for database encoding/decoding to/from dict
+# Import "random" for card shuffling
+# Import "time" for slowing execution and allowing users to read text in some areas. 
 import json, random, time
 
 # Place at top to fix weird indent bug with multi-line text.
