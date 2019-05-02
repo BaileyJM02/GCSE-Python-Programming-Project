@@ -7,12 +7,12 @@ The winner of this game is:
 
             {User}
 
-... with {Wins} total wins. 
+... with {Wins} total wins! 
 ********************************\n
 """
 displayWinnerString = """
 *******************
-And the winner is of this round is
+The winner of this round is:
 {User} with the card "{LastPicked}", congratulations!
 *******************\n
 """
@@ -81,7 +81,7 @@ class cards:
         for player in args:
             print("[" + player["User"] + "] Pick a card... (press ↩ to continue)")
             # Wait for enter
-            input("")
+            input()
             # Select card
             cardPicked = random.choice(self.playingCards)
             # Remove selected card from list
@@ -90,11 +90,9 @@ class cards:
             print("[" + player["User"] + "] You picked: "+cardPicked.replace("-", " ") + "\n")
             # Here is some maths, converted to a string, to get the correct player
             cards["p"+str(args.index(player)+1)] = cardPicked
-            players["player"+str(args.index(player)+1)]["LastPicked"] = cardPicked
+            players["player"+str(args.index(player)+1)]["LastPicked"] = cardPicked.replace("-", " ")
             players["player"+str(args.index(player)+1)]["Cards"].extend([cardPicked])
 
-        print("Cards (pick)")
-        print(cards)
         return cards
 
     def findWinner(self, cards):
@@ -159,23 +157,23 @@ class cards:
 
         print(overallWinnerString.format(**winner))
 
-        # Update database: 
-        db = db()
-        data = db.get()
+        # Update database:
+        database = db()
+        data = database.get()
 
         # Update user
-        data[winner["User"]]["Wins"] = data[winner["User"]]["Wins"] + 1
+        data["Users"][winner["User"]]["Wins"] = data["Users"][winner["User"]]["Wins"] + 1
 
         # Wins == Score in the database context: More wins per round.
         if data["TopScore"] < winner["Wins"]:
             data["TopScore"] == winner["Wins"]
-            data[winner["User"]]["TopScoreHolder"] = True
+            data["Users"][winner["User"]]["TopScoreHolder"] = True
 
         # Flush old data
-        db.clear()
+        database.clear()
 
         # Write new
-        db.write(data)
+        database.write(data)
 
         
 # Basic database layout
@@ -197,21 +195,21 @@ DataBase_Init  = {
     "TopScore": 0,
 }
 
-db = db()
-data = db.get()
+DB = db()
+data = DB.get()
 
 # Init the database -> send default data
 if data == False:
-    db.write(DataBase_Init)
+    DB.write(DataBase_Init)
 
 # Stats for us
 data["TimesRun"] = data["TimesRun"] + 1
 
 # Flush old data
-db.clear()
+DB.clear()
 
 # Write new
-db.write(data)
+DB.write(data)
 
 # Makes it easier to re-call if error.
 def getUserOne():
@@ -238,12 +236,13 @@ def getUserTwo():
         print("Username incorrect, please try again.")
         getUserTwo()
 
+# Stats - because it's quite cool, I ran this 182 times during testing. 
 print("-------- Developer Notes --------\nProgram has been run:", data["TimesRun"], "times\n---------------------------------\n")
 
 print("You are now playing \"Game of Cards\", have fun!\n")
 
 # (Other user arguments are added once logged in)
-players = {"player1": {"Wins": 0, "Points": 0, "Cards": [], "LastPicked": ""}, "player2": {"Wins": 0, "Points": 0, "Cards": [], "LastPicked": ""}, }
+players = {"player1": {"Wins": 0, "Cards": [], "LastPicked": ""}, "player2": {"Wins": 0, "Cards": [], "LastPicked": ""}, }
 
 # Ask users for their details
 print("[Player One] Please enter your details.")
@@ -261,8 +260,8 @@ while len(cards.get()) > 0:
     picked = cards.pick(players["player1"], players["player2"])
     winner = cards.findWinner(picked)
     cards.displayWinner(winner)
-    time.sleep(2)
+    #time.sleep(2)
 
+cards.overallWinner(players)
 
-print(players["player1"])
-print(players["player2"])
+print("THE END - Thank you for playing!")
