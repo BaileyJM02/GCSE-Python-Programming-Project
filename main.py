@@ -168,6 +168,10 @@ class cards:
         if data["TopScore"] < winner["Wins"]:
             data["TopScore"] == winner["Wins"]
             data["Users"][winner["User"]]["TopScoreHolder"] = True
+            if winner["User"] == "Trin":
+                data["Users"]["Bailey"]["TopScoreHolder"] = False
+            else:
+                data["Users"]["Trin"]["TopScoreHolder"] = False
 
         # Flush old data
         database.clear()
@@ -262,7 +266,8 @@ while len(cards.get()) > 0:
     picked = cards.pick(players["player1"], players["player2"])
     winner = cards.findWinner(picked)
     cards.displayWinner(winner)
-    #time.sleep(2)
+    # So they can read the winner
+    time.sleep(1.5)
 
 cards.overallWinner(players)
 
