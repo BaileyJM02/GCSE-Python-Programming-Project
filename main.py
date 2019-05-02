@@ -164,7 +164,7 @@ class cards:
         # Update user
         data["Users"][winner["User"]]["Wins"] = data["Users"][winner["User"]]["Wins"] + 1
 
-        # Wins == Score in the database context: More wins per round.
+        # Wins equals score in the database context: TopScore is the most wins per round.
         if data["TopScore"] < winner["Wins"]:
             data["TopScore"] == winner["Wins"]
             data["Users"][winner["User"]]["TopScoreHolder"] = True
