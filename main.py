@@ -201,6 +201,8 @@ data = DB.get()
 # Init the database -> send default data
 if data == False:
     DB.write(DataBase_Init)
+    # Get database again
+    data = DB.get()
 
 # Stats for us
 data["TimesRun"] = data["TimesRun"] + 1
