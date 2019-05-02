@@ -1,4 +1,4 @@
-import json, random
+import json, random, time
 
 class db:
     def get(self):
@@ -58,10 +58,10 @@ class cards:
 
     # User picks a card eg. a.pick(p1, p2)
     def pick(self, playerOne, playerTwo):
-        players = [playerOne, playerTwo]
+        args = [playerOne, playerTwo]
         cards = {"p1":"", "p2":""}
-        for player in players:
-            print("[" + player["User"] + "] You are picking a card... (press enter to continue)")
+        for player in args:
+            print("[" + player["User"] + "] Pick a card... (press ↩ to continue)")
             # Wait for enter
             input("")
             # Select card
@@ -70,7 +70,10 @@ class cards:
             self.playingCards.remove(cardPicked)
             # Return selected card
             print("[" + player["User"] + "] You picked: "+cardPicked.replace("-", " ") + "\n")
-            cards["p"+str(players.index(player)+1)] = cardPicked
+            # Here is some maths, converted to a string, to get the correct player
+            cards["p"+str(args.index(player)+1)] = cardPicked
+            players["player"+str(args.index(player)+1)]["LastPicked"] = cardPicked
+            players["player"+str(args.index(player)+1)]["Cards"].extend([cardPicked])
 
         print("Cards (pick)")
         print(cards)
@@ -84,15 +87,55 @@ class cards:
         p1 = p1.split('-')
         p2 = p2.split('-')
 
-        # Format to its own object
-        p1 = {"Colour": p1[0], "Number": p1[1]}
-        p2 = {"Colour": p2[0], "Number": p2[1]}
+        # Format to its own object & convert number to int so we can compare correcty
+        p1 = {"Colour": p1[0], "Number": int(p1[1])}
+        p2 = {"Colour": p2[0], "Number": int(p2[1])}
 
-        # Compare colours first.
-        print(p1)
-        print(p2)
+        if p1["Colour"] == p2["Colour"]:
+            # Compare number values
+            if p1["Number"] > p2["Number"]:
+                return {"p1": True, "p2": False}
+            else:
+                return {"p1": False, "p2": True}
 
-        return p1
+        # If colour != colour
+        else:
+            if p1["Colour"] == "Red":
+                # Only card Red wins against
+                if p2["Colour"] == "Black":
+                    return {"p1": True, "p2": False}
+                else:
+                    return {"p1": False, "p2": True}
+
+            if p1["Colour"] == "Yellow":
+                # Only card Yellow wins against
+                if p2["Colour"] == "Red":
+                    return {"p1": True, "p2": False}
+                else:
+                    return {"p1": False, "p2": True}
+            
+            if p1["Colour"] == "Black":
+                # Only card Black wins against
+                if p2["Colour"] == "Yellow":
+                    return {"p1": True, "p2": False}
+                else:
+                    return {"p1": False, "p2": True}
+
+    def displayWinner(self, winner):
+        user = {}
+        if winner["p1"]:
+            user = players["player1"]
+        else:
+            user = players["player2"]
+        
+        string = """\n
+        *******************
+        And the winner is of this round is:
+        {User} with the card {LastPicked}", congratulations!
+        *******************\n
+        """.format(**user)
+
+        print(string)
 
         
 # Basic database layout
@@ -130,11 +173,11 @@ db.write(data)
 
 # Makes it easier to re-call if error.
 def getUserOne():
-    p1["User"] = input("[Player One] Name: ")
-    if data["Users"].get(p1["User"], False):
+    players["player1"]["User"] = input("[Player One] Name: ")
+    if data["Users"].get(players["player1"]["User"], False):
         #ask for password
-        p1["Pass"] = input("[Player One] Password: ")
-        if data["Users"][p1["User"]]["Pass"] != p1["Pass"]:
+        players["player1"]["Pass"] = input("[Player One] Password: ")
+        if data["Users"][players["player1"]["User"]]["Pass"] != players["player1"]["Pass"]:
             print("Password incorrect, please try again.")
             getUserOne()
     else:
@@ -142,11 +185,11 @@ def getUserOne():
         getUserOne()
 
 def getUserTwo():
-    p2["User"] = input("[Player Two] Name: ")
-    if data["Users"].get(p2["User"], False) and p2["User"] != p1["User"]:
+    players["player2"]["User"] = input("[Player Two] Name: ")
+    if data["Users"].get(players["player2"]["User"], False) and players["player2"]["User"] != players["player1"]["User"]:
         #ask for password
-        p2["Pass"] = input("[Player Two] Password: ")
-        if data["Users"][p2["User"]]["Pass"] != p2["Pass"]:
+        players["player2"]["Pass"] = input("[Player Two] Password: ")
+        if data["Users"][players["player2"]["User"]]["Pass"] != players["player2"]["Pass"]:
             print("Password incorrect, please try again.")
             getUserTwo()
     else:
@@ -158,8 +201,7 @@ print("-------- Developer Notes --------\nProgram has been run:", data["TimesRun
 print("You are now playing \"Game of Cards\", have fun!\n")
 
 # (Other user arguments are added once logged in)
-p1 = {"Points": 0}
-p2 = {"Points": 0}
+players = {"player1": {"Points": 0, "Cards": [], "LastPicked": ""}, "player2": {"Points": 0, "Cards": [], "LastPicked": ""}, }
 
 # Ask users for their details
 print("[Player One] Please enter your details.")
@@ -173,7 +215,12 @@ print("\n\n-------- Woohoo! --------\nAll users authenticated.\nLet the games be
 # Init the cards
 cards = cards()
 
-aa = cards.pick(p1, p2)
-print(aa)
-bb = cards.findWinner(aa)
-print(bb)
+while len(cards.get()) > 0:
+    picked = cards.pick(players["player1"], players["player2"])
+    winner = cards.findWinner(picked)
+    cards.displayWinner(winner)
+    time.sleep(2)
+
+
+print(players["player1"])
+print(players["player2"])
