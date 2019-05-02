@@ -1,5 +1,23 @@
 import json, random, time
 
+# Place at top to fix weird indent bug with multi-line text.
+overallWinnerString = """\n\n\n
+********* GAME WINNER **********
+The winner of this game is:
+
+            {User}
+
+... with {Wins} total wins. 
+********************************\n
+"""
+displayWinnerString = """
+*******************
+And the winner is of this round is
+{User} with the card "{LastPicked}", congratulations!
+*******************\n
+"""
+
+# Database managment
 class db:
     def get(self):
         # Check if it errors
@@ -125,17 +143,39 @@ class cards:
         user = {}
         if winner["p1"]:
             user = players["player1"]
+            players["player1"]["Wins"] += 1
         else:
             user = players["player2"]
-        
-        string = """\n
-        *******************
-        And the winner is of this round is:
-        {User} with the card {LastPicked}", congratulations!
-        *******************\n
-        """.format(**user)
+            players["player2"]["Wins"] += 1
 
-        print(string)
+        print(displayWinnerString.format(**user))
+
+    def overallWinner(self, participants):
+        winner = {}
+        if participants["player1"]["Wins"] > participants["player2"]["Wins"]:
+            winner = participants["player1"]
+        else:
+            winner = participants["player2"]
+
+        print(overallWinnerString.format(**winner))
+
+        # Update database: 
+        db = db()
+        data = db.get()
+
+        # Update user
+        data[winner["User"]]["Wins"] = data[winner["User"]]["Wins"] + 1
+
+        # Wins == Score in the database context: More wins per round.
+        if data["TopScore"] < winner["Wins"]:
+            data["TopScore"] == winner["Wins"]
+            data[winner["User"]]["TopScoreHolder"] = True
+
+        # Flush old data
+        db.clear()
+
+        # Write new
+        db.write(data)
 
         
 # Basic database layout
@@ -146,13 +186,15 @@ DataBase_Init  = {
         "Bailey":{
             "Pass":"0202",
             "Wins": 0,
+            "TopScoreHolder": False,
         },
        "Trin":{
             "Pass":"2525",
             "Wins": 0,
+            "TopScoreHolder": False,
         },
     },
-    "TopScore": 100,
+    "TopScore": 0,
 }
 
 db = db()
@@ -201,7 +243,7 @@ print("-------- Developer Notes --------\nProgram has been run:", data["TimesRun
 print("You are now playing \"Game of Cards\", have fun!\n")
 
 # (Other user arguments are added once logged in)
-players = {"player1": {"Points": 0, "Cards": [], "LastPicked": ""}, "player2": {"Points": 0, "Cards": [], "LastPicked": ""}, }
+players = {"player1": {"Wins": 0, "Points": 0, "Cards": [], "LastPicked": ""}, "player2": {"Wins": 0, "Points": 0, "Cards": [], "LastPicked": ""}, }
 
 # Ask users for their details
 print("[Player One] Please enter your details.")
