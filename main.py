@@ -1,7 +1,7 @@
 # Copyleft 2019 Bailey Matthews
 # Written by Bailey Matthews for the 2019 OCR Computer Science GCSE.
 
-# Methods for certain things are not as consistent as they could be to show off different methods avaliable.
+# Methods for certain things are not as consistent as they could be to show off different methods available.
 
 # Import "json" for database encoding/decoding to/from dict
 # Import "random" for card shuffling
