@@ -1,4 +1,6 @@
-# Copyleft 2019 Bailey Matthews
+# Copyright 2019 Bailey Matthews
+# Released under the MIT licence.
+
 # Written by Bailey Matthews for the 2019 OCR Computer Science GCSE.
 
 # Methods for certain things are not as consistent as they could be to show off different methods available.
