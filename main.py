@@ -113,7 +113,7 @@ class cards:
         p1 = p1.split('-')
         p2 = p2.split('-')
 
-        # Format to its own object & convert number to int so we can compare correcty
+        # Format to its own object & convert number to int so we can compare correctly
         p1 = {"Colour": p1[0], "Number": int(p1[1])}
         p2 = {"Colour": p2[0], "Number": int(p2[1])}
 
@@ -176,12 +176,13 @@ class cards:
 
         # Wins equals score in the database context: TopScore is the most wins per round.
         if data["TopScore"] < winner["Wins"]:
-            data["TopScore"] == winner["Wins"]
-            data["Users"][winner["User"]]["TopScoreHolder"] = True
-            if winner["User"] == "Trin":
-                data["Users"]["Bailey"]["TopScoreHolder"] = False
+            if data["TopScore"] == winner["Wins"]:
+                data["Users"][winner["User"]]["TopScoreHolder"] = True
+
+            if winner["User"] == "trin":
+                data["Users"]["bailey"]["TopScoreHolder"] = False
             else:
-                data["Users"]["Trin"]["TopScoreHolder"] = False
+                data["Users"]["trin"]["TopScoreHolder"] = False
 
         # Flush old data
         database.clear()
@@ -195,12 +196,12 @@ class cards:
 DataBase_Init  = {
     "TimesRun": 0,
     "Users": {
-        "Bailey":{
+        "bailey":{
             "Pass":"0202",
             "Wins": 0,
             "TopScoreHolder": False,
         },
-       "Trin":{
+       "trin":{
             "Pass":"2525",
             "Wins": 0,
             "TopScoreHolder": False,
@@ -229,7 +230,7 @@ DB.write(data)
 
 # Makes it easier to re-call if error.
 def getUserOne():
-    players["player1"]["User"] = input("[Player One] Name: ")
+    players["player1"]["User"] = input("[Player One] Name: ").lower()
     if data["Users"].get(players["player1"]["User"], False):
         #ask for password
         players["player1"]["Pass"] = input("[Player One] Password: ")
@@ -241,7 +242,7 @@ def getUserOne():
         getUserOne()
 
 def getUserTwo():
-    players["player2"]["User"] = input("[Player Two] Name: ")
+    players["player2"]["User"] = input("[Player Two] Name: ").lower()
     if data["Users"].get(players["player2"]["User"], False) and players["player2"]["User"] != players["player1"]["User"]:
         #ask for password
         players["player2"]["Pass"] = input("[Player Two] Password: ")
